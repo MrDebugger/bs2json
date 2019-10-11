@@ -16,7 +16,7 @@ setup(
 
     license="MIT",
 
-    author="Ijaz Ur Rahim"
+    author="Ijaz Ur Rahim",
     author_email="ijazkhan095@gmail.com",
 
     description="Converter for bs4 Tags into Json"
