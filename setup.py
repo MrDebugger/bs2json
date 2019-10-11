@@ -3,7 +3,7 @@
 from setuptools import setup
 
 url = "https://github.com/MrDebugger/bs2json"
-version = "0.0.0.1"
+version = "0.0.0.2"
 
 setup(
     name="bs2json",
@@ -19,7 +19,7 @@ setup(
     author="Ijaz Ur Rahim",
     author_email="ijazkhan095@gmail.com",
 
-    description="Converter for bs4 Tags into Json",
+    description="Convert bs4 Tags into Json",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
 
