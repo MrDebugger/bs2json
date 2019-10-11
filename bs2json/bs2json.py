@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup,ResultSet,element as Element
+from bs4 import ResultSet,element as Element
 
 class bs2json:
 	def convert(self,element,json={}):
@@ -43,6 +43,9 @@ class bs2json:
 						if Key == key:
 							if value:
 								values.append(value)
+				if len(values) == 1:
+					json[key] = values[0]
+					continue
 				if values:				
 					json[key] = values
 			return json
