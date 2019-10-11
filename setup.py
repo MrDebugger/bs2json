@@ -19,7 +19,7 @@ setup(
     author="Ijaz Ur Rahim",
     author_email="ijazkhan095@gmail.com",
 
-    description="Converter for bs4 Tags into Json"
+    description="Converter for bs4 Tags into Json",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
 
