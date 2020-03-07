@@ -14,7 +14,7 @@ class bs2json:
 		if L is None:
 			List = []
 		else:
-			List = l
+			List = L
 		if not type(List) == list:
 			raise TypeError(f"convertAll(x,y) `y` argument must be a {list.__name__} not {type(List).__name__}")
 		if type(elements) == ResultSet:
