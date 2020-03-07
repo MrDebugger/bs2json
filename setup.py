@@ -3,7 +3,7 @@
 from setuptools import setup
 
 url = "https://github.com/MrDebugger/bs2json"
-version = "0.0.0.3"
+version = "0.0.1"
 
 setup(
     name="bs2json",
