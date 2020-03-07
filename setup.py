@@ -3,7 +3,7 @@
 from setuptools import setup
 
 url = "https://github.com/MrDebugger/bs2json"
-version = "0.0.0.2"
+version = "0.0.0.3"
 
 setup(
     name="bs2json",
@@ -26,6 +26,9 @@ setup(
     keywords=[
         "parser",
         "html",
+        "bs4",
+        "BeautifulSoup",
+        "soup",
         "bs4",
         "json"
     ],
