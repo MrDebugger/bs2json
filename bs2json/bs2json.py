@@ -11,10 +11,7 @@ class bs2json:
 			raise TypeError(f"convert(x,y) `x` argument must be a {Element.__name__} not {type(element).__name__}")
 
 	def convertAll(self,elements,L=None):
-		if L is None:
-			List = []
-		else:
-			List = L
+		List = L if L is not None else []
 		if not type(List) == list:
 			raise TypeError(f"convertAll(x,y) `y` argument must be a {list.__name__} not {type(List).__name__}")
 		if type(elements) == ResultSet:
