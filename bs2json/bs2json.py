@@ -51,4 +51,4 @@ class bs2json:
 					json[key] = values
 			return json
 		else:
-			return 
+			return json
