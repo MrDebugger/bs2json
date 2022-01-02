@@ -22,8 +22,8 @@ html = get('https://ijazurrahim.com').text
 soup = BeautifulSoup(html,'lxml')
 converter = bs2json()
 
-tag = soup.find('a')
-json = converter.convertAll(tag,join=True)
+tags = soup.findAll('a')
+json = converter.convertAll(tags,join=True)
 print(json)
 ```
 
