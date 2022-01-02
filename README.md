@@ -43,3 +43,17 @@ Other Methods
 - `labels()` method takes two positional arguments `attributes` and `text` which replaces the respective names in output json.
 - `convert()` method takes `element` (bs4.element.Tag) and `json` (dict: optional) as arguments. Whereas `element` is result of `BeautifulSoup().find()` and `json` is an empty dictionary or already constructed dictionary.
 - `convertAll()` method takes `elements` (bs4.element.Tag), `List` (list: optional) and `join` (bool: default=False) as arguments. Whereas `elements` is result of `BeautifulSoup().findAll()`, `list` is an empty list or already constructed list and `join` is a boolean value. When `join` becomes `True`, same tags will append to one list and assinged to one tag name resulting a dictionary. For more information, see example files.
+
+
+Contributing
+----
+
+We appreciate all contributions. If you are planning to contribute any bug-fixes, please do so without further discussions.
+
+If you plan to contribute new features etc. please first open an issue or reuse an exisiting issue, and discuss the feature with us. We will discuss with you on the issue timely or set up conference calls if needed.
+
+We appreciate all contributions and thank all the contributors!
+
+<a href = "https://github.com/MrDebugger/bs2json/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo=MrDebugger/bs2json"/>
+</a>
