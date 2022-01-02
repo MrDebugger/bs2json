@@ -2,7 +2,7 @@
 [![PyPi pyversions](https://img.shields.io/pypi/pyversions/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
 [![PyPi license](https://img.shields.io/pypi/l/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
 
-Convert HTML Tags of BeautifulSoup class to JSON data using.
+Convert HTML Tags of BeautifulSoup class to JSON data.
 
 Installation
 ----
@@ -22,8 +22,8 @@ html = get('https://ijazurrahim.com').text
 soup = BeautifulSoup(html,'lxml')
 converter = bs2json()
 
-tag = soup.find('ul')
-json = converter.convert(tag)
+tag = soup.find('a')
+json = converter.convertAll(tag,join=True)
 print(json)
 ```
 
@@ -33,13 +33,13 @@ Output
 Upon running the Above Program, you will get the following output
 
 ```python3
-{'ul': {'attributes': {'class': ['nav', 'nav-justified', 'justify-content-center']}, 'li': [{'attributes': {'class': ['nav-item'], 'onclick': "window.location='#home';change();"}, 'a': {'attributes': {'href': '#home'}, 'text': 'Home'}, 'text': ''}, {'attributes': {'class': ['nav-item'], 'onclick': "window.location='#skills';change();"}, 'a': {'attributes': {'href': '#skills'}, 'text': 'Skills'}, 'text': ''}, {'attributes': {'class': ['nav-item'], 'onclick': "window.location='#contact';change();"}, 'a': {'attributes': {'href': '#contact'}, 'text': 'Contact'}, 'text': ''}, {'attributes': {'class': ['nav-item'], 'onclick': "window.location='#blog';change();"}, 'a': {'attributes': {'href': '#blog'}, 'text': 'Blog'}, 'text': ''}], 'text': ''}}
+[{'a': {'i': {'attributes': {'class': ['fa', 'fa-facebook']}}, 'attributes': {'href': 'https://web.facebook.com/MisterDebugger'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-instagram']}}, 'attributes': {'href': 'https://www.instagram.com/MisterDebugger'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-twitter']}}, 'attributes': {'href': 'https://www.twitter.com/muibraheem96'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-stack-overflow']}}, 'attributes': {'href': 'https://www.stackoverflow.com/users/9140224/ijaz-ur-rahim'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-linkedin']}}, 'attributes': {'href': 'https://www.linkedin.com/in/muibraheem96'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-github']}}, 'attributes': {'href': 'https://www.github.com/MrDebugger'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-building']}}, 'attributes': {'href': 'https://www.upwork.com/freelancers/~01c44a17a8ed828883'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-youtube']}}, 'attributes': {'href': 'https://www.youtube.com/ijazurrahim'}}}]
 ```
 
 Other Methods
 ----
 
-- There are total 2 methods `convert()` and `convertAll()` which takes two parameters of type `bs4.element.Tag`, `dict` and `bs4.ResultSet`, `list` respectively. 
-- `convert()` method takes `bs4.element.Tag` and `dict` as arguments. `bs4.element.Tag` is result of `soup.find()` and `dict` is an empty dictionary or already constructed dictionary.
-- `convertAll()` also method takes `bs4.ResultSet` and `list` as arguments. `bs4.ResultSet` is result of `soup.findAll()` and `list` is an empty list or already constructed list.
-
+- There are total 3 methods `labels()`, `convert()` and `convertAll()` where `convert()` and `convertAll()` takes two parameters of type `bs4.element.Tag`, `dict` (optional) and three parameters of type `bs4.ResultSet`, `list` (optional), `bool` (default: False) respectively. 
+- `labels()` method takes two positional arguments `attributes` and `text` which replaces the respective names in output json.
+- `convert()` method takes `element` (bs4.element.Tag) and `json` (dict: optional) as arguments. Whereas `element` is result of `BeautifulSoup().find()` and `json` is an empty dictionary or already constructed dictionary.
+- `convertAll()` method takes `elements` (bs4.element.Tag), `List` (list: optional) and `join` (bool: default=False) as arguments. Whereas `elements` is result of `BeautifulSoup().findAll()`, `list` is an empty list or already constructed list and `join` is a boolean value. When `join` becomes `True`, same tags will append to one list and assinged to one tag name resulting a dictionary. For more information, see example files.
