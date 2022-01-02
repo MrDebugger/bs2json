@@ -3,7 +3,7 @@
 from setuptools import setup
 
 url = "https://github.com/MrDebugger/bs2json"
-version = "0.0.1"
+version = "0.0.2"
 
 setup(
     name="bs2json",
@@ -30,13 +30,21 @@ setup(
         "BeautifulSoup",
         "soup",
         "bs4",
+        "bs2json",
         "json"
     ],
     classifiers=[
-        "Operating System :: OS Independent",
+        "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3"
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
 
     install_requires=[
