@@ -23,7 +23,7 @@ soup = BeautifulSoup(html,'lxml')
 converter = bs2json()
 
 tags = soup.findAll('a')
-json = converter.convertAll(tags,join=True)
+json = converter.convertAll(tags)
 print(json)
 ```
 
