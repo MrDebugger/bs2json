@@ -1,3 +1,4 @@
 bs2json.egg-info/*
 build/*
 dist/*
+*__pycache__

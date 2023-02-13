@@ -13,36 +13,39 @@ Example Syntax
 ----
 
 ```python3
-from bs4 import BeautifulSoup
-from requests import get
-from bs2json import bs2json
+from bs2json import BS2Json
 
-html = get('https://ijazurrahim.com').text
+html = '<html><head><title>Page Title</title></head><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>'
+bs2json = BS2Json(html)
 
-soup = BeautifulSoup(html,'lxml')
-converter = bs2json()
+# Convert soup to JSON
+json_obj = bs2json.convert()
 
-tags = soup.findAll('a')
-json = converter.convertAll(tags)
-print(json)
+# Save JSON to file
+bs2json.save()
+
+# Print prettified output
+bs2json.prettify()
+
 ```
 
-Output
-----
+Plus point
+---
 
-Upon running the Above Program, you will get the following output
+You can also use the module methods as an extension to the `element.Tag`.
+For more information, see the `example_ext.py` file from examples
 
-```python3
-[{'a': {'i': {'attributes': {'class': ['fa', 'fa-facebook']}}, 'attributes': {'href': 'https://web.facebook.com/MisterDebugger'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-instagram']}}, 'attributes': {'href': 'https://www.instagram.com/MisterDebugger'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-twitter']}}, 'attributes': {'href': 'https://www.twitter.com/muibraheem96'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-stack-overflow']}}, 'attributes': {'href': 'https://www.stackoverflow.com/users/9140224/ijaz-ur-rahim'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-linkedin']}}, 'attributes': {'href': 'https://www.linkedin.com/in/muibraheem96'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-github']}}, 'attributes': {'href': 'https://www.github.com/MrDebugger'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-building']}}, 'attributes': {'href': 'https://www.upwork.com/freelancers/~01c44a17a8ed828883'}}}, {'a': {'i': {'attributes': {'class': ['fa', 'fa-youtube']}}, 'attributes': {'href': 'https://www.youtube.com/ijazurrahim'}}}]
-```
 
-Other Methods
-----
+What's new
+---
 
-- There are total 3 methods `labels()`, `convert()` and `convertAll()` where `convert()` and `convertAll()` takes two parameters of type `bs4.element.Tag`, `dict` (optional) and three parameters of type `bs4.ResultSet`, `list` (optional), `bool` (default: False) respectively. 
-- `labels()` method takes two positional arguments `attributes` and `text` which replaces the respective names in output json.
-- `convert()` method takes `element` (bs4.element.Tag) and `json` (dict: optional) as arguments. Whereas `element` is result of `BeautifulSoup().find()` and `json` is an empty dictionary or already constructed dictionary.
-- `convertAll()` method takes `elements` (bs4.element.Tag), `List` (list: optional) and `join` (bool: default=False) as arguments. Whereas `elements` is result of `BeautifulSoup().findAll()`, `list` is an empty list or already constructed list and `join` is a boolean value. When `join` becomes `True`, same tags will append to one list and assinged to one tag name resulting a dictionary. For more information, see example files.
+- Ability to initialize the bs4 object from given string
+- Converts a single bs4 tag or a tag matching the given string to a JSON object
+- Option to include or exclude comments in the JSON representation
+- Option to remove whitespaces from the start and end of text
+- Ability to save the converted object to a file
+- Ability to prettify the output of the last converted object
+- Option to set custom labels for converting BeautifulSoup elements to JSON
 
 
 Contributing

@@ -1,28 +1,21 @@
 #! /usr/bin/env python3
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 url = "https://github.com/MrDebugger/bs2json"
-version = "0.0.3"
+version = "0.1.2"
 
 setup(
     name="bs2json",
-
-    packages=["bs2json"],
-
+    packages=find_packages(),
     url=url,
-
     version=version,
-
     license="MIT",
-
     author="Ijaz Ur Rahim",
     author_email="ijazkhan095@gmail.com",
-
     description="Convert bs4 Tags into Json",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-
     keywords=[
         "parser",
         "html",
@@ -35,16 +28,7 @@ setup(
     ],
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
     ],
 
     install_requires=[
