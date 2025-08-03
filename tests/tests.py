@@ -72,5 +72,42 @@ class TestBS2Json(unittest.TestCase):
         result = out['stdout']
         self.assertEqual(result, expected_4)
 
+    def test_keep_order_feature(self):
+        """Test the keep_order feature preserves element order."""
+        html_ordered = '''<html><body>
+<h3>first heading</h3>
+<p>paragraph</p>  
+<h3>second heading</h3>
+<hr>
+</body></html>'''
+        
+        # Test default behavior (grouping)
+        bs2json_default = BS2Json(html_ordered)
+        result_default = bs2json_default.convert()
+        self.assertEqual(result_default['html']['body']['h3'], ['first heading', 'second heading'])
+        
+        # Test keep_order behavior (preserving order)
+        bs2json_ordered = BS2Json(html_ordered, keep_order=True)
+        result_ordered = bs2json_ordered.convert()
+        
+        # Extract body content
+        body_content = None
+        for item in result_ordered['html']:
+            if 'body' in item:
+                body_content = item['body']
+                break
+        
+        self.assertIsNotNone(body_content)
+        self.assertIsInstance(body_content, list)
+        
+        # Verify order is preserved: h3, p, h3, hr
+        expected_order = ['h3', 'p', 'h3', 'hr']
+        actual_order = [list(element.keys())[0] for element in body_content]
+        self.assertEqual(actual_order, expected_order)
+        
+        # Verify h3 elements are separate and simplified
+        self.assertEqual(body_content[0]['h3'], 'first heading')
+        self.assertEqual(body_content[2]['h3'], 'second heading')
+
 if __name__ == "__main__":
     unittest.main()
