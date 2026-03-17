@@ -1,13 +1,26 @@
+"""Extension mode: adds .to_json() directly to every bs4 Tag."""
+
 from bs4 import BeautifulSoup
-from bs2json import install
+from bs2json import install, remove
+
+# Install the extension
 install()
 
 html = '<html><head><title>Page Title</title></head><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>'
-soup = BeautifulSoup(html, 'lxml')
+soup = BeautifulSoup(html, 'html.parser')
 
-# convert return of the find method to json
-print(soup.find('body').to_json())
-# convert the soup object to json
-print(soup.to_json())
-# convert any tag to json
-print(soup.body.to_json())
+# Convert the return of find() to JSON
+print("body:", soup.find('body').to_json())
+
+# Convert the soup object to JSON
+print("soup:", soup.to_json())
+
+# Convert any tag to JSON
+print("body tag:", soup.body.to_json())
+
+# With options
+print("keep_order:", soup.body.to_json(keep_order=True))
+
+# Clean up when done
+remove()
+print("Extension removed:", not hasattr(soup.body, 'to_json'))
