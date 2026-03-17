@@ -1,3 +1,5 @@
+<p align="center">
+
 [![PyPI version](https://img.shields.io/pypi/v/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
 [![PyPI downloads](https://img.shields.io/pypi/dm/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
@@ -6,35 +8,19 @@
 [![GitHub issues](https://img.shields.io/github/issues/MrDebugger/bs2json.svg)](https://github.com/MrDebugger/bs2json/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/MrDebugger/bs2json.svg)](https://github.com/MrDebugger/bs2json/commits)
 
-# bs2json
+</p>
 
-A lightweight Python library that converts BeautifulSoup4 HTML elements into structured JSON. Parse any HTML and get clean, traversable dictionaries — preserving document order, with full control over comments, whitespace, and label naming.
+<h1 align="center">bs2json</h1>
 
----
+<p align="center">
+A lightweight Python library that converts BeautifulSoup4 HTML elements into structured JSON.<br>
+Parse any HTML and get clean, traversable dictionaries — preserving document order,<br>
+with full control over comments, whitespace, and label naming.
+</p>
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Output Format](#output-format)
-- [Conversion](#conversion)
-  - [Convert Specific Tags](#convert-specific-tags)
-  - [Convert Multiple Tags](#convert-multiple-tags)
-  - [From BeautifulSoup Objects](#from-beautifulsoup-objects)
-- [Options](#options)
-  - [Group by Tag Name](#group-by-tag-name)
-  - [Comments](#comments)
-  - [Whitespace](#whitespace)
-  - [Custom Labels](#custom-labels)
-  - [Configuration Object](#configuration-object)
-- [Output](#output)
-  - [Save to File](#save-to-file)
-  - [Pretty Print](#pretty-print)
-- [Advanced Usage](#advanced-usage)
-  - [Context Manager and Callable](#context-manager-and-callable)
-  - [Extension Mode](#extension-mode)
-- [API Reference](#api-reference)
-- [Contributing](#contributing)
+<p align="center">
+<b>Python 3.8+</b> &bull; Only dependency: <code>beautifulsoup4</code>
+</p>
 
 ---
 
@@ -43,8 +29,6 @@ A lightweight Python library that converts BeautifulSoup4 HTML elements into str
 ```bash
 pip install -U bs2json
 ```
-
-**Requirements:** Python 3.8+ | Only dependency: `beautifulsoup4`
 
 ---
 
@@ -89,7 +73,9 @@ Elements preserve their original document order. The JSON structure follows thes
 - **Attributes** appear under the `"attrs"` key
 - **Mixed content** (text + tags) preserves order in `children`
 
-**Example output:**
+<details>
+<summary><b>Full output example</b></summary>
+
 ```python
 {'html': {'head': {'title': 'My Page'},
           'body': {'children': [{'h1': 'Welcome'},
@@ -102,11 +88,14 @@ Elements preserve their original document order. The JSON structure follows thes
                                        'text': 'Link 2'}}]}}}
 ```
 
+</details>
+
 ---
 
 ## Conversion
 
-### Convert Specific Tags
+<details open>
+<summary><h3>Convert Specific Tags</h3></summary>
 
 ```python
 converter = BS2Json(html)
@@ -122,7 +111,10 @@ converter.convert('a', href='/link1')
 # {'a': {'attrs': {'href': '/link1'}, 'text': 'Link 1'}}
 ```
 
-### Convert Multiple Tags
+</details>
+
+<details open>
+<summary><h3>Convert Multiple Tags</h3></summary>
 
 ```python
 converter = BS2Json(html)
@@ -138,7 +130,10 @@ converter.convert_all('a', join=True)
 #         {'attrs': {'href': '/link2'}, 'text': 'Link 2'}]}]
 ```
 
-### From BeautifulSoup Objects
+</details>
+
+<details>
+<summary><h3>From BeautifulSoup Objects</h3></summary>
 
 You can pass an existing BeautifulSoup object or Tag instead of raw HTML:
 
@@ -158,11 +153,14 @@ converter = BS2Json()
 converter.convert(soup.body)
 ```
 
+</details>
+
 ---
 
 ## Options
 
-### Group by Tag Name
+<details open>
+<summary><h3>Group by Tag Name</h3></summary>
 
 By default, elements preserve document order. Use `group_by_tag=True` to group siblings by tag name — useful when you don't care about order and want quick access by tag:
 
@@ -178,7 +176,10 @@ BS2Json(html, group_by_tag=True).convert()
 # {'html': {'body': {'h3': ['First', 'Second'], 'p': 'Text'}}}
 ```
 
-### Comments
+</details>
+
+<details>
+<summary><h3>Comments</h3></summary>
 
 ```python
 comment_html = '<html><body><!-- TODO --><p>text</p></body></html>'
@@ -192,7 +193,10 @@ BS2Json(comment_html, include_comments=False).convert()
 # {'html': {'body': {'p': 'text'}}}
 ```
 
-### Whitespace
+</details>
+
+<details>
+<summary><h3>Whitespace</h3></summary>
 
 ```python
 ws_html = '<html><body><p>  hello  </p></body></html>'
@@ -206,7 +210,10 @@ BS2Json(ws_html, strip=False).convert()
 # {'html': {'body': {'p': '  hello  '}}}
 ```
 
-### Custom Labels
+</details>
+
+<details>
+<summary><h3>Custom Labels</h3></summary>
 
 Change the JSON key names for attributes, text content, and comments:
 
@@ -223,7 +230,10 @@ Or via constructor:
 BS2Json(html, attr_name='@', text_name='#text', comment_name='#comment')
 ```
 
-### Configuration Object
+</details>
+
+<details>
+<summary><h3>Configuration Object</h3></summary>
 
 All options are stored in a `ConversionConfig` dataclass, accessible and modifiable at any time:
 
@@ -240,11 +250,14 @@ converter.config.group_by_tag = True
 converter.config.include_comments = False
 ```
 
+</details>
+
 ---
 
 ## Output
 
-### Save to File
+<details open>
+<summary><h3>Save to File</h3></summary>
 
 ```python
 converter = BS2Json(html)
@@ -265,7 +278,10 @@ buf = io.StringIO()
 converter.save(buf)
 ```
 
-### Pretty Print
+</details>
+
+<details>
+<summary><h3>Pretty Print</h3></summary>
 
 ```python
 converter = BS2Json(html)
@@ -273,11 +289,14 @@ converter.convert()
 converter.prettify()  # prints to stdout
 ```
 
+</details>
+
 ---
 
 ## Advanced Usage
 
-### Context Manager and Callable
+<details>
+<summary><h3>Context Manager and Callable</h3></summary>
 
 ```python
 # Use as context manager
@@ -289,7 +308,10 @@ converter = BS2Json(html)
 result = converter()
 ```
 
-### Extension Mode
+</details>
+
+<details>
+<summary><h3>Extension Mode</h3></summary>
 
 Monkey-patch `.to_json()` directly onto every BeautifulSoup Tag element:
 
@@ -308,11 +330,14 @@ soup.find('a').to_json(include_comments=False, strip=False)
 remove()  # clean up when done
 ```
 
+</details>
+
 ---
 
 ## API Reference
 
-### `BS2Json`
+<details open>
+<summary><h3>BS2Json</h3></summary>
 
 | Method | Description |
 |--------|-------------|
@@ -326,7 +351,10 @@ remove()  # clean up when done
 | `.last_obj` | Result of the most recent conversion |
 | `.soup` | The underlying BeautifulSoup object |
 
-### `ConversionConfig`
+</details>
+
+<details open>
+<summary><h3>ConversionConfig</h3></summary>
 
 | Field | Default | Description |
 |-------|---------|-------------|
@@ -336,6 +364,8 @@ remove()  # clean up when done
 | `include_comments` | `True` | Whether to include HTML comments |
 | `strip` | `True` | Strip leading/trailing whitespace from text |
 | `group_by_tag` | `False` | Group siblings by tag name instead of preserving order |
+
+</details>
 
 ---
 
