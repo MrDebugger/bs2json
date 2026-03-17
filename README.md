@@ -1,6 +1,10 @@
 [![PyPI version](https://img.shields.io/pypi/v/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
 [![PyPI license](https://img.shields.io/pypi/l/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
+[![GitHub stars](https://img.shields.io/github/stars/MrDebugger/bs2json.svg)](https://github.com/MrDebugger/bs2json/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/MrDebugger/bs2json.svg)](https://github.com/MrDebugger/bs2json/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/MrDebugger/bs2json.svg)](https://github.com/MrDebugger/bs2json/commits)
 
 # bs2json
 
