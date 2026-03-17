@@ -238,6 +238,25 @@ class TestBS2Json(unittest.TestCase):
         r = repr(converter)
         self.assertIn('BS2Json', r)
 
+    def test_keep_order_attrs_with_children(self):
+        """keep_order: elements with attrs should use {attrs, children} not append."""
+        html = '<html><body><table id="t1"><tr><td>a</td></tr></table></body></html>'
+        result = BS2Json(html, keep_order=True).convert()
+        html_content = result['html']
+        body = None
+        for item in html_content:
+            if isinstance(item, dict) and 'body' in item:
+                body = item['body']
+                break
+        table_entry = body[0]
+        table = table_entry['table']
+        # Should be a dict with attrs and children, not a list
+        self.assertIsInstance(table, dict)
+        self.assertIn('attrs', table)
+        self.assertEqual(table['attrs']['id'], 't1')
+        self.assertIn('children', table)
+        self.assertIsInstance(table['children'], list)
+
     def test_keep_order_default_off(self):
         """Default behavior (keep_order=False) should still group by tag name."""
         html = '<html><body><h3>first</h3><p>paragraph</p><h3>second</h3></body></html>'
