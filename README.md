@@ -1,5 +1,3 @@
-<p align="center">
-
 [![PyPI version](https://img.shields.io/pypi/v/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
 [![PyPI downloads](https://img.shields.io/pypi/dm/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/bs2json.svg)](https://pypi.python.org/pypi/bs2json/)
@@ -8,34 +6,35 @@
 [![GitHub issues](https://img.shields.io/github/issues/MrDebugger/bs2json.svg)](https://github.com/MrDebugger/bs2json/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/MrDebugger/bs2json.svg)](https://github.com/MrDebugger/bs2json/commits)
 
-</p>
-
 <h1 align="center">bs2json</h1>
 
-<p align="center">
-A lightweight Python library that converts BeautifulSoup4 HTML elements into structured JSON.<br>
-Parse any HTML and get clean, traversable dictionaries — preserving document order,<br>
-with full control over comments, whitespace, and label naming.
-</p>
+<div align="center">
 
-<p align="center">
-<b>Python 3.8+</b> &bull; Only dependency: <code>beautifulsoup4</code>
-</p>
+A lightweight Python library that converts BeautifulSoup4 HTML elements into structured JSON.
+Parse any HTML and get clean, traversable dictionaries — preserving document order,
+with full control over comments, whitespace, and label naming.
+
+**Python 3.8+** | Only dependency: `beautifulsoup4`
+
+</div>
 
 ---
 
 <details open>
 <summary><b>Table of Contents</b></summary>
+<br>
 
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Output Format](#output-format)
-- [Conversion](#conversion)
-- [Options](#options)
-- [Output](#output)
-- [Advanced Usage](#advanced-usage)
-- [API Reference](#api-reference)
-- [Contributing](#contributing)
+| Section | Description |
+|---------|-------------|
+| [Installation](#installation) | How to install |
+| [Quick Start](#quick-start) | Basic usage example |
+| [Output Format](#output-format) | How HTML maps to JSON |
+| [Conversion](#conversion) | Converting tags, multiple tags, from BeautifulSoup |
+| [Options](#options) | group_by_tag, comments, whitespace, labels, config |
+| [Output](#output) | Save to file, pretty print |
+| [Advanced Usage](#advanced-usage) | Context manager, callable, extension mode |
+| [API Reference](#api-reference) | BS2Json methods, ConversionConfig fields |
+| [Contributing](#contributing) | How to contribute |
 
 </details>
 
@@ -92,6 +91,7 @@ Elements preserve their original document order. The JSON structure follows thes
 
 <details>
 <summary><b>Full output example</b></summary>
+<br>
 
 ```python
 {'html': {'head': {'title': 'My Page'},
@@ -112,7 +112,8 @@ Elements preserve their original document order. The JSON structure follows thes
 ## Conversion
 
 <details open>
-<summary><h3>Convert Specific Tags</h3></summary>
+<summary><b>Convert Specific Tags</b></summary>
+<br>
 
 ```python
 converter = BS2Json(html)
@@ -131,7 +132,8 @@ converter.convert('a', href='/link1')
 </details>
 
 <details open>
-<summary><h3>Convert Multiple Tags</h3></summary>
+<summary><b>Convert Multiple Tags</b></summary>
+<br>
 
 ```python
 converter = BS2Json(html)
@@ -150,7 +152,8 @@ converter.convert_all('a', join=True)
 </details>
 
 <details>
-<summary><h3>From BeautifulSoup Objects</h3></summary>
+<summary><b>From BeautifulSoup Objects</b></summary>
+<br>
 
 You can pass an existing BeautifulSoup object or Tag instead of raw HTML:
 
@@ -177,7 +180,8 @@ converter.convert(soup.body)
 ## Options
 
 <details open>
-<summary><h3>Group by Tag Name</h3></summary>
+<summary><b>Group by Tag Name</b></summary>
+<br>
 
 By default, elements preserve document order. Use `group_by_tag=True` to group siblings by tag name — useful when you don't care about order and want quick access by tag:
 
@@ -196,7 +200,8 @@ BS2Json(html, group_by_tag=True).convert()
 </details>
 
 <details>
-<summary><h3>Comments</h3></summary>
+<summary><b>Comments</b></summary>
+<br>
 
 ```python
 comment_html = '<html><body><!-- TODO --><p>text</p></body></html>'
@@ -213,7 +218,8 @@ BS2Json(comment_html, include_comments=False).convert()
 </details>
 
 <details>
-<summary><h3>Whitespace</h3></summary>
+<summary><b>Whitespace</b></summary>
+<br>
 
 ```python
 ws_html = '<html><body><p>  hello  </p></body></html>'
@@ -230,7 +236,8 @@ BS2Json(ws_html, strip=False).convert()
 </details>
 
 <details>
-<summary><h3>Custom Labels</h3></summary>
+<summary><b>Custom Labels</b></summary>
+<br>
 
 Change the JSON key names for attributes, text content, and comments:
 
@@ -250,7 +257,8 @@ BS2Json(html, attr_name='@', text_name='#text', comment_name='#comment')
 </details>
 
 <details>
-<summary><h3>Configuration Object</h3></summary>
+<summary><b>Configuration Object</b></summary>
+<br>
 
 All options are stored in a `ConversionConfig` dataclass, accessible and modifiable at any time:
 
@@ -274,7 +282,8 @@ converter.config.include_comments = False
 ## Output
 
 <details open>
-<summary><h3>Save to File</h3></summary>
+<summary><b>Save to File</b></summary>
+<br>
 
 ```python
 converter = BS2Json(html)
@@ -298,7 +307,8 @@ converter.save(buf)
 </details>
 
 <details>
-<summary><h3>Pretty Print</h3></summary>
+<summary><b>Pretty Print</b></summary>
+<br>
 
 ```python
 converter = BS2Json(html)
@@ -313,7 +323,8 @@ converter.prettify()  # prints to stdout
 ## Advanced Usage
 
 <details>
-<summary><h3>Context Manager and Callable</h3></summary>
+<summary><b>Context Manager and Callable</b></summary>
+<br>
 
 ```python
 # Use as context manager
@@ -328,7 +339,8 @@ result = converter()
 </details>
 
 <details>
-<summary><h3>Extension Mode</h3></summary>
+<summary><b>Extension Mode</b></summary>
+<br>
 
 Monkey-patch `.to_json()` directly onto every BeautifulSoup Tag element:
 
@@ -354,7 +366,8 @@ remove()  # clean up when done
 ## API Reference
 
 <details open>
-<summary><h3>BS2Json</h3></summary>
+<summary><b>BS2Json</b></summary>
+<br>
 
 | Method | Description |
 |--------|-------------|
@@ -371,7 +384,8 @@ remove()  # clean up when done
 </details>
 
 <details open>
-<summary><h3>ConversionConfig</h3></summary>
+<summary><b>ConversionConfig</b></summary>
+<br>
 
 | Field | Default | Description |
 |-------|---------|-------------|
