@@ -21,6 +21,7 @@ class BS2Json:
             *,
             include_comments: Union[bool, str]=True,
             strip: bool=True,
+            keep_order: bool=False,
             **kwargs
         ) -> None:
         """Initialize the instance of bs2json class.
@@ -57,6 +58,7 @@ class BS2Json:
             self.soup = soup
         self.include_comments = include_comments
         self.strip = strip
+        self.keep_order = keep_order
 
         self.labels(attrs=attr_name, text=text_name, comment=comment_name)
 
@@ -299,8 +301,16 @@ class BS2Json:
         comment_name = self.__labels['comment']
         if isinstance(element,Element.Tag):
             json[element.name] = self.__tag(element)
-            if json[element.name].get(text_name) and len(json[element.name]) == 1:
+            if (isinstance(json[element.name], dict) and
+                json[element.name].get(text_name) and
+                len(json[element.name]) == 1):
                 return json[element.name][text_name]
+            if (isinstance(json[element.name], list) and
+                len(json[element.name]) == 1 and
+                isinstance(json[element.name][0], dict) and
+                json[element.name][0].get(text_name) and
+                len(json[element.name][0]) == 1):
+                return json[element.name][0][text_name]
             json = json[element.name]
         elif isinstance(element, Element.Comment) and self.include_comments:
             return element.output_ready()
@@ -315,14 +325,26 @@ class BS2Json:
             json['doctype'] = str(element)
             json.update(self.to_json(element.next_element))
         elif isinstance(element, (Iterator, Iterable)):
-            for elem in element:
-                name = self.__get_name(elem)
-                value = self.to_json(elem) or None
-                if not value and name == text_name:
-                    continue
-                if name in json:
-                    json[name].append(value)
-                else:
-                    json[name] = [value]
-            self.__fix(json)
+            if self.keep_order:
+                # Return a list preserving order instead of grouping by type
+                ordered_list = []
+                for elem in element:
+                    name = self.__get_name(elem)
+                    value = self.to_json(elem) or None
+                    if not value and name == text_name:
+                        continue
+                    ordered_list.append({name: value})
+                return ordered_list
+            else:
+                # Original behavior: group by type
+                for elem in element:
+                    name = self.__get_name(elem)
+                    value = self.to_json(elem) or None
+                    if not value and name == text_name:
+                        continue
+                    if name in json:
+                        json[name].append(value)
+                    else:
+                        json[name] = [value]
+                self.__fix(json)
         return json

@@ -13,6 +13,7 @@ def to_json(
         tag: element.Tag,
         include_comments: bool=True,
         strip: bool=True,
+        keep_order: bool=False,
         attr_name: str="attrs",
         text_name: str="text",
         comment_name: str="comment",
@@ -27,7 +28,8 @@ def to_json(
     kwargs = dict(
         **name_kwargs,
         include_comments=include_comments,
-        strip=strip
+        strip=strip,
+        keep_order=keep_order
     )
 
 

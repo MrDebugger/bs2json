@@ -216,6 +216,39 @@ class TestBS2Json(unittest.TestCase):
         with self.assertRaises(TypeError):
             converter.convert_all('a', lst={'key': 'val'})
 
+    def test_keep_order(self):
+        """keep_order=True should preserve element order instead of grouping."""
+        html = '<html><body><h3>first</h3><p>paragraph</p><h3>second</h3></body></html>'
+        bs2json = BS2Json(html, keep_order=True)
+        result = bs2json.convert()
+        # With keep_order, children are ordered lists instead of grouped dicts.
+        # Navigate to body content.
+        html_content = result['html']
+        self.assertIsInstance(html_content, list)
+        # Find the body entry
+        body_content = None
+        for item in html_content:
+            if isinstance(item, dict) and 'body' in item:
+                body_content = item['body']
+                break
+        self.assertIsNotNone(body_content, "Could not find 'body' in html children list")
+        self.assertIsInstance(body_content, list)
+        # Order should be: h3, p, h3
+        tag_names = [list(el.keys())[0] for el in body_content]
+        self.assertEqual(tag_names, ['h3', 'p', 'h3'])
+        self.assertEqual(body_content[0]['h3'], 'first')
+        self.assertEqual(body_content[1]['p'], 'paragraph')
+        self.assertEqual(body_content[2]['h3'], 'second')
+
+    def test_keep_order_default_off(self):
+        """Default behavior (keep_order=False) should still group by tag name."""
+        html = '<html><body><h3>first</h3><p>paragraph</p><h3>second</h3></body></html>'
+        bs2json = BS2Json(html)
+        result = bs2json.convert()
+        body = result['html']['body']
+        # h3 should be grouped into a list
+        self.assertEqual(body['h3'], ['first', 'second'])
+
 
 if __name__ == "__main__":
     unittest.main()
