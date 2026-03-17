@@ -62,6 +62,12 @@ print("Ordered output:")
 ordered.prettify()
 print()
 
+# --- HTML comments ---
+comment_html = '<html><body><!-- TODO: fix this --><p>visible</p><!-- another comment --></body></html>'
+print("include_comments=True:", BS2Json(comment_html, include_comments=True).convert())
+print("include_comments=False:", BS2Json(comment_html, include_comments=False).convert())
+print()
+
 # --- Strip whitespace control ---
 ws_html = '<html><body><p>  hello world  </p></body></html>'
 print("strip=True:", BS2Json(ws_html, strip=True).convert())
