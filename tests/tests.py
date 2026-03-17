@@ -72,5 +72,21 @@ class TestBS2Json(unittest.TestCase):
         result = out['stdout']
         self.assertEqual(result, expected_4)
 
+    def test_instance_isolation(self):
+        """Two instances must not share mutable state."""
+        a = BS2Json(self.html_str)
+        b = BS2Json('<html><body><p>hello</p></body></html>')
+        b.labels(text="txt")
+        a.convert()
+        # a should still use default label "text", not "txt"
+        body = a.last_obj['html']['body']
+        # The bug: b.labels(text="txt") corrupts a's labels because __labels is shared.
+        # With the bug, the second <p> will have 'txt' key instead of 'text'.
+        story_p = body['p']
+        if isinstance(story_p, list):
+            for p in story_p:
+                if isinstance(p, dict):
+                    self.assertNotIn('txt', p, "Label 'text' was corrupted to 'txt' by another instance")
+
 if __name__ == "__main__":
     unittest.main()

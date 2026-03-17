@@ -12,11 +12,8 @@ class BS2Json:
         __labels (Dict): Dictionary of labels for converting BeautifulSoup elements to JSON.
         soup (BeautifulSoup): Instance of BeautifulSoup class.
     """
-    include_comments = True
-    strip = True
-    __labels: Dict = {}
-    soup: BeautifulSoup = None
-    last_obj: Dict = {}
+    include_comments: bool = True
+    strip: bool = True
 
     def __init__(self,
             soup: Union[Element.Tag, BeautifulSoup, str]=None,
@@ -36,6 +33,10 @@ class BS2Json:
             strip (bool): Whether to remove whitespaces from the start and end of text.
             **kwargs: Keyword arguments for initializing BeautifulSoup.
         """
+
+        self.__labels = {}
+        self.last_obj = {}
+        self.soup = None
 
         attr_name = kwargs.pop("attr_name", "attrs")
         text_name = kwargs.pop("text_name","text")
