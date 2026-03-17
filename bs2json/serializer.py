@@ -91,8 +91,9 @@ class Serializer:
                 json[element.name].update(value)
             elif isinstance(value, list):
                 if element.attrs:
-                    value.append(json[element.name])
-                json[element.name] = value
+                    json[element.name]['children'] = value
+                else:
+                    json[element.name] = value
             else:
                 json[element.name] = value
         return json[element.name]
