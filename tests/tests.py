@@ -72,6 +72,25 @@ class TestBS2Json(unittest.TestCase):
         result = out['stdout']
         self.assertEqual(result, expected_4)
 
+    def test_convert_all_no_args_crashes(self):
+        """convert_all() with no args should not crash when soup is set."""
+        bs2json = BS2Json(self.html_str)
+        # This triggers the bug: self.soup (BeautifulSoup) fails isinstance(ResultSet)
+        try:
+            result = bs2json.convert_all()
+        except TypeError as e:
+            if 'ResultSet' in str(e):
+                self.fail("convert_all() crashed with ResultSet TypeError — bug not fixed")
+            raise
+        self.assertIsInstance(result, list)
+
+    def test_convert_all_with_string(self):
+        """convert_all('a') should find and convert all matching tags."""
+        bs2json = BS2Json(self.html_str)
+        result = bs2json.convert_all('a')
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 3)
+
     def test_instance_isolation(self):
         """Two instances must not share mutable state."""
         a = BS2Json(self.html_str)

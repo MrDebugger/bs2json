@@ -194,7 +194,7 @@ class BS2Json:
         if (isinstance(elements, str) or kwargs) and self.soup:
             elements = self.soup.find_all(elements, **kwargs)
         elif elements is None and self.soup:
-            elements = self.soup
+            elements = self.soup.find_all(True)
 
         if not lst:
             lst = []
