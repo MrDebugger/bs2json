@@ -24,6 +24,23 @@ with full control over comments, whitespace, and label naming.
 
 ---
 
+<details open>
+<summary><b>Table of Contents</b></summary>
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Output Format](#output-format)
+- [Conversion](#conversion)
+- [Options](#options)
+- [Output](#output)
+- [Advanced Usage](#advanced-usage)
+- [API Reference](#api-reference)
+- [Contributing](#contributing)
+
+</details>
+
+---
+
 ## Installation
 
 ```bash
