@@ -1,4 +1,4 @@
-from typing import Iterable, Iterator, List, Dict, Union, Any, NoReturn, TextIO
+from typing import Iterable, Iterator, List, Dict, Union, Any, TextIO
 from json import dump, dumps
 from pprint import pprint
 from bs4 import ResultSet, element as Element, BeautifulSoup
@@ -22,7 +22,7 @@ class BS2Json:
             include_comments: Union[bool, str]=True,
             strip: bool=True,
             **kwargs
-        ) -> NoReturn:
+        ) -> None:
         """Initialize the instance of bs2json class.
 
         Args:
@@ -95,7 +95,7 @@ class BS2Json:
         """
         pprint(self.last_obj)
 
-    def labels(self, **kwargs)  -> NoReturn:
+    def labels(self, **kwargs) -> None:
         """Set labels for converting BeautifulSoup elements to JSON.
 
         Args:
