@@ -8,7 +8,7 @@
 
 # bs2json
 
-A lightweight Python library that converts BeautifulSoup4 HTML elements into structured JSON. Parse any HTML and get clean, traversable dictionaries — with full control over element ordering, comments, whitespace, and label naming.
+A lightweight Python library that converts BeautifulSoup4 HTML elements into structured JSON. Parse any HTML and get clean, traversable dictionaries — preserving document order, with full control over comments, whitespace, and label naming.
 
 ## Installation
 
@@ -43,13 +43,17 @@ converter.prettify()
 **Output:**
 ```python
 {'html': {'head': {'title': 'My Page'},
-          'body': {'h1': 'Welcome',
-                   'p': {'attrs': {'class': ['intro']},
-                         'text': 'Hello',
-                         'b': 'world'},
-                   'a': [{'attrs': {'href': '/link1'}, 'text': 'Link 1'},
-                         {'attrs': {'href': '/link2'}, 'text': 'Link 2'}]}}}
+          'body': {'children': [{'h1': 'Welcome'},
+                                {'p': {'attrs': {'class': ['intro']},
+                                       'children': [{'text': 'Hello'},
+                                                    {'b': 'world'}]}},
+                                {'a': {'attrs': {'href': '/link1'},
+                                       'text': 'Link 1'}},
+                                {'a': {'attrs': {'href': '/link2'},
+                                       'text': 'Link 2'}}]}}}
 ```
+
+Elements preserve their original document order. Single text children stay simple (`{'h1': 'Welcome'}`), while multiple children use `{'children': [...]}`.
 
 ## Features
 
@@ -60,15 +64,12 @@ converter = BS2Json(html)
 
 # By tag name
 converter.convert('body')
-# {'body': {'h1': 'Welcome', 'p': {...}, 'a': [...]}}
 
 # By CSS class
 converter.convert(class_='intro')
-# {'p': {'attrs': {'class': ['intro']}, 'text': 'Hello', 'b': 'world'}}
 
-# By id or any bs4 find() argument
+# By attribute
 converter.convert('a', href='/link1')
-# {'a': {'attrs': {'href': '/link1'}, 'text': 'Link 1'}}
 ```
 
 ### Convert Multiple Tags
@@ -83,24 +84,22 @@ converter.convert_all('a')
 
 # Grouped by tag name into a single dict
 converter.convert_all('a', join=True)
-# [{'a': [{'attrs': {'href': '/link1'}, 'text': 'Link 1'},
-#         {'attrs': {'href': '/link2'}, 'text': 'Link 2'}]}]
 ```
 
-### Preserve Element Order
+### Group by Tag Name (Legacy Mode)
 
-By default, sibling elements with the same tag are grouped together. Use `keep_order=True` to preserve the original document order — useful when the sequence of elements matters:
+By default, elements preserve document order. Use `group_by_tag=True` to group siblings by tag name — useful when you don't care about order and want quick access by tag:
 
 ```python
 html = '<html><body><h3>First</h3><p>Text</p><h3>Second</h3></body></html>'
 
-# Default: groups by tag name
+# Default: preserves document order
 BS2Json(html).convert()
-# {'html': {'body': {'h3': ['First', 'Second'], 'p': 'Text'}}}
+# {'html': {'body': {'children': [{'h3': 'First'}, {'p': 'Text'}, {'h3': 'Second'}]}}}
 
-# Ordered: preserves document order
-BS2Json(html, keep_order=True).convert()
-# {'html': [{'body': [{'h3': 'First'}, {'p': 'Text'}, {'h3': 'Second'}]}]}
+# Grouped: siblings merged by tag name
+BS2Json(html, group_by_tag=True).convert()
+# {'html': {'body': {'h3': ['First', 'Second'], 'p': 'Text'}}}
 ```
 
 ### Control Comments and Whitespace
@@ -110,15 +109,12 @@ comment_html = '<html><body><!-- TODO: fix --><p>  hello  </p></body></html>'
 
 # Include comments (default)
 BS2Json(comment_html).convert()
-# {'html': {'body': {'comment': '<!-- TODO: fix -->', 'p': 'hello'}}}
 
 # Exclude comments
 BS2Json(comment_html, include_comments=False).convert()
-# {'html': {'body': {'p': 'hello'}}}
 
 # Preserve whitespace (stripped by default)
 BS2Json(comment_html, strip=False).convert()
-# {'html': {'body': {'comment': '<!-- TODO: fix -->', 'p': '  hello  '}}}
 ```
 
 ### Custom Labels
@@ -180,7 +176,6 @@ soup = BeautifulSoup(html, 'html.parser')
 
 # Now every tag has .to_json()
 soup.find('body').to_json()
-soup.body.to_json(keep_order=True)
 soup.find('a').to_json(include_comments=False, strip=False)
 
 remove()  # clean up when done
@@ -193,19 +188,17 @@ All conversion options are stored in a `ConversionConfig` dataclass, accessible 
 ```python
 from bs2json import BS2Json, ConversionConfig
 
-converter = BS2Json(html, keep_order=True, strip=False)
+converter = BS2Json(html, strip=False)
 print(converter.config)
 # ConversionConfig(attr_name='attrs', text_name='text', comment_name='comment',
-#                  include_comments=True, strip=False, keep_order=True)
+#                  include_comments=True, strip=False, group_by_tag=False)
 
 # Modify config directly
-converter.config.keep_order = False
+converter.config.group_by_tag = True
 converter.config.include_comments = False
 ```
 
 ## Also Works With BeautifulSoup Objects
-
-You can pass an existing BeautifulSoup object or Tag instead of a raw HTML string:
 
 ```python
 from bs4 import BeautifulSoup
@@ -230,7 +223,7 @@ converter.convert(tag)
 
 | Method | Description |
 |--------|-------------|
-| `BS2Json(soup, features, *, include_comments, strip, keep_order, **kwargs)` | Initialize from HTML string, Tag, or BeautifulSoup object |
+| `BS2Json(soup, features, *, include_comments, strip, group_by_tag, **kwargs)` | Initialize from HTML string, Tag, or BeautifulSoup object |
 | `.convert(element=None, json=None, *, inplace=False, **kwargs)` | Convert a single tag to a dict |
 | `.convert_all(elements=None, lst=None, *, join=False, **kwargs)` | Convert multiple tags to a list of dicts |
 | `.labels(attrs=..., text=..., comment=...)` | Change JSON key names |
@@ -249,13 +242,11 @@ converter.convert(tag)
 | `comment_name` | `"comment"` | JSON key for HTML comments |
 | `include_comments` | `True` | Whether to include HTML comments |
 | `strip` | `True` | Strip leading/trailing whitespace from text |
-| `keep_order` | `False` | Preserve element order instead of grouping |
+| `group_by_tag` | `False` | Group siblings by tag name instead of preserving order |
 
 ## Contributing
 
-We appreciate all contributions. If you are planning to contribute bug-fixes, please do so without further discussion.
-
-If you plan to contribute new features, please first open an issue and discuss the feature with us.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, versioning guide, and how to submit changes.
 
 <a href="https://github.com/MrDebugger/bs2json/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=MrDebugger/bs2json"/>

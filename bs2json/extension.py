@@ -7,7 +7,7 @@ def to_json(
         tag: element.Tag,
         include_comments: bool = True,
         strip: bool = True,
-        keep_order: bool = False,
+        group_by_tag: bool = False,
         attr_name: str = "attrs",
         text_name: str = "text",
         comment_name: str = "comment",
@@ -19,7 +19,7 @@ def to_json(
         comment_name=comment_name,
         include_comments=include_comments,
         strip=strip,
-        keep_order=keep_order,
+        group_by_tag=group_by_tag,
     )
 
     if not len(tag):

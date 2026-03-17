@@ -55,11 +55,11 @@ result = converter.convert('body')
 print("Custom labels:", result)
 print()
 
-# --- Preserve element order (keep_order) ---
-ordered = BS2Json(html, keep_order=True)
-result = ordered.convert()
-print("Ordered output:")
-ordered.prettify()
+# --- Ordered output is the default; group_by_tag=True opts into grouped mode ---
+grouped = BS2Json(html, group_by_tag=True)
+result = grouped.convert()
+print("Grouped output (group_by_tag=True):")
+grouped.prettify()
 print()
 
 # --- HTML comments ---
@@ -88,5 +88,5 @@ with BS2Json(html) as converter:
 print()
 
 # --- Access config directly ---
-converter = BS2Json(html, keep_order=True, strip=False)
+converter = BS2Json(html, group_by_tag=True, strip=False)
 print("Config:", converter.config)

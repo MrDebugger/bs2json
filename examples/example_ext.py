@@ -19,7 +19,7 @@ print("soup:", soup.to_json())
 print("body tag:", soup.body.to_json())
 
 # With options
-print("keep_order:", soup.body.to_json(keep_order=True))
+print("group_by_tag:", soup.body.to_json(group_by_tag=True))
 
 # Clean up when done
 remove()

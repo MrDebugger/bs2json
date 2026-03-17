@@ -13,4 +13,4 @@ class ConversionConfig:
     comment_name: str = "comment"
     include_comments: bool = True
     strip: bool = True
-    keep_order: bool = False
+    group_by_tag: bool = False

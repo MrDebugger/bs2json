@@ -56,16 +56,8 @@ class Serializer:
             json['doctype'] = str(element)
             json.update(self.to_json(element.next_element))
         elif isinstance(element, (Iterator, Iterable)):
-            if self.config.keep_order:
-                ordered_list = []
-                for elem in element:
-                    name = self._get_name(elem)
-                    value = self.to_json(elem) or None
-                    if not value and name in (text_name, comment_name):
-                        continue
-                    ordered_list.append({name: value})
-                return ordered_list
-            else:
+            if self.config.group_by_tag:
+                # Legacy mode: group siblings by tag name into a dict
                 for elem in element:
                     name = self._get_name(elem)
                     value = self.to_json(elem) or None
@@ -76,12 +68,21 @@ class Serializer:
                     else:
                         json[name] = [value]
                 self._fix(json)
+            else:
+                # Default: preserve document order as a list
+                ordered_list = []
+                for elem in element:
+                    name = self._get_name(elem)
+                    value = self.to_json(elem) or None
+                    if not value and name in (text_name, comment_name):
+                        continue
+                    ordered_list.append({name: value})
+                return ordered_list
         return json
 
     def _tag(self, element):
         """Process a single Tag element with its attributes and children."""
         attr_name = self.config.attr_name
-        text_name = self.config.text_name
         json = {element.name: {}}
         if element.attrs:
             json[element.name][attr_name] = element.attrs
@@ -90,8 +91,17 @@ class Serializer:
             if isinstance(value, dict):
                 json[element.name].update(value)
             elif isinstance(value, list):
-                if element.attrs:
+                if not self.config.group_by_tag and len(value) > 1:
                     json[element.name]['children'] = value
+                elif not self.config.group_by_tag and len(value) == 1:
+                    only = value[0]
+                    if isinstance(only, dict) and len(only) == 1:
+                        json[element.name].update(only)
+                    else:
+                        json[element.name]['children'] = value
+                elif element.attrs:
+                    value.append(json[element.name])
+                    json[element.name] = value
                 else:
                     json[element.name] = value
             else:

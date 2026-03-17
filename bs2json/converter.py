@@ -22,7 +22,7 @@ class BS2Json:
             *,
             include_comments: Union[bool, str] = True,
             strip: bool = True,
-            keep_order: bool = False,
+            group_by_tag: bool = False,
             **kwargs
         ) -> None:
         self.last_obj = {}
@@ -38,7 +38,7 @@ class BS2Json:
             comment_name=comment_name,
             include_comments=include_comments,
             strip=strip,
-            keep_order=keep_order,
+            group_by_tag=group_by_tag,
         )
         self._serializer = Serializer(self.config)
 
