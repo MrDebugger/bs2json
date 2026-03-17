@@ -1,27 +1,86 @@
-from bs4 import BeautifulSoup as bs
-import requests 
-from bs2json import BS2Json
+"""Basic usage examples for bs2json."""
 
-html = requests.get('https://webscraper.io/test-sites/e-commerce/static').text
+from bs2json import BS2Json, ConversionConfig
 
-soup = bs(html,'lxml')
-converter = BS2Json(soup, 'lxml')
+html = """
+<html>
+<head><title>My Page</title></head>
+<body>
+    <h1>Welcome</h1>
+    <p class="intro">This is a <b>sample</b> page.</p>
+    <ul>
+        <li><a href="/one">Link 1</a></li>
+        <li><a href="/two">Link 2</a></li>
+    </ul>
+    <p class="footer">Footer text</p>
+</body>
+</html>
+"""
 
-# testing one tag
-json = converter.convert(class_='col-sm-4')
-print(json, '*'*50, sep='\n', end='\n\n')
+# --- Basic conversion ---
+converter = BS2Json(html)
+result = converter.convert()
+print("Full document:")
+converter.prettify()
+print()
 
-# testing more than one tags
-jsonp = converter.convert_all(class_='col-sm-4')
-print(jsonp, '*'*50, sep='\n', end='\n\n')
+# --- Convert a specific tag ---
+converter = BS2Json(html)
+result = converter.convert('body')
+print("Body only:", result)
+print()
 
-# testing more than one tags but joining same tags into one
-tags = soup.findAll('a')
-jsonp = converter.convert_all(tags, join=True)
-print(jsonp, '*'*50, sep='\n', end='\n\n')
+# --- Find and convert by CSS class ---
+converter = BS2Json(html)
+result = converter.convert(class_='intro')
+print("Intro paragraph:", result)
+print()
 
-# changing labels for attributes and text
-converter.labels(attributes='xxx',text='yyy')
-tag = soup.find('title')
-json = converter.convert(tag)
-print(json,'*'*50,sep='\n',end='\n\n')
+# --- Convert all matching tags ---
+converter = BS2Json(html)
+links = converter.convert_all('a')
+print("All links:", links)
+print()
+
+# --- Join same tags into one ---
+converter = BS2Json(html)
+links = converter.convert_all('a', join=True)
+print("Joined links:", links)
+print()
+
+# --- Custom labels ---
+converter = BS2Json(html)
+converter.labels(attrs='attributes', text='content')
+result = converter.convert('body')
+print("Custom labels:", result)
+print()
+
+# --- Preserve element order (keep_order) ---
+ordered = BS2Json(html, keep_order=True)
+result = ordered.convert()
+print("Ordered output:")
+ordered.prettify()
+print()
+
+# --- Strip whitespace control ---
+ws_html = '<html><body><p>  hello world  </p></body></html>'
+print("strip=True:", BS2Json(ws_html, strip=True).convert())
+print("strip=False:", BS2Json(ws_html, strip=False).convert())
+print()
+
+# --- Save to file ---
+converter = BS2Json(html)
+converter.convert()
+converter.save('bs2json-output.json')
+print("Saved to bs2json-output.json")
+print()
+
+# --- Context manager ---
+with BS2Json(html) as converter:
+    result = converter()  # __call__ is a shortcut for convert()
+    print("Context manager:", result.keys())
+print()
+
+# --- Access config directly ---
+converter = BS2Json(html, keep_order=True, strip=False)
+print("Config:", converter.config)
