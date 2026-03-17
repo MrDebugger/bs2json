@@ -10,6 +10,34 @@
 
 A lightweight Python library that converts BeautifulSoup4 HTML elements into structured JSON. Parse any HTML and get clean, traversable dictionaries — preserving document order, with full control over comments, whitespace, and label naming.
 
+---
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Output Format](#output-format)
+- [Conversion](#conversion)
+  - [Convert Specific Tags](#convert-specific-tags)
+  - [Convert Multiple Tags](#convert-multiple-tags)
+  - [From BeautifulSoup Objects](#from-beautifulsoup-objects)
+- [Options](#options)
+  - [Group by Tag Name](#group-by-tag-name)
+  - [Comments](#comments)
+  - [Whitespace](#whitespace)
+  - [Custom Labels](#custom-labels)
+  - [Configuration Object](#configuration-object)
+- [Output](#output)
+  - [Save to File](#save-to-file)
+  - [Pretty Print](#pretty-print)
+- [Advanced Usage](#advanced-usage)
+  - [Context Manager and Callable](#context-manager-and-callable)
+  - [Extension Mode](#extension-mode)
+- [API Reference](#api-reference)
+- [Contributing](#contributing)
+
+---
+
 ## Installation
 
 ```bash
@@ -17,6 +45,8 @@ pip install -U bs2json
 ```
 
 **Requirements:** Python 3.8+ | Only dependency: `beautifulsoup4`
+
+---
 
 ## Quick Start
 
@@ -40,7 +70,26 @@ result = converter.convert()
 converter.prettify()
 ```
 
-**Output:**
+---
+
+## Output Format
+
+Elements preserve their original document order. The JSON structure follows these rules:
+
+| HTML | JSON |
+|------|------|
+| `<h1>text</h1>` | `{"h1": "text"}` |
+| `<p class="x">text</p>` | `{"p": {"attrs": {"class": ["x"]}, "text": "text"}}` |
+| `<div><h1>A</h1><p>B</p></div>` | `{"div": {"children": [{"h1": "A"}, {"p": "B"}]}}` |
+| `<a href="/">link</a>` | `{"a": {"attrs": {"href": "/"}, "text": "link"}}` |
+| `<!-- note -->` | `{"comment": "<!-- note -->"}` |
+
+- **Single text child** stays simple: `{"tag": "text"}`
+- **Multiple children** use: `{"tag": {"children": [...]}}`
+- **Attributes** appear under the `"attrs"` key
+- **Mixed content** (text + tags) preserves order in `children`
+
+**Example output:**
 ```python
 {'html': {'head': {'title': 'My Page'},
           'body': {'children': [{'h1': 'Welcome'},
@@ -53,9 +102,9 @@ converter.prettify()
                                        'text': 'Link 2'}}]}}}
 ```
 
-Elements preserve their original document order. Single text children stay simple (`{'h1': 'Welcome'}`), while multiple children use `{'children': [...]}`.
+---
 
-## Features
+## Conversion
 
 ### Convert Specific Tags
 
@@ -70,6 +119,7 @@ converter.convert(class_='intro')
 
 # By attribute
 converter.convert('a', href='/link1')
+# {'a': {'attrs': {'href': '/link1'}, 'text': 'Link 1'}}
 ```
 
 ### Convert Multiple Tags
@@ -84,9 +134,35 @@ converter.convert_all('a')
 
 # Grouped by tag name into a single dict
 converter.convert_all('a', join=True)
+# [{'a': [{'attrs': {'href': '/link1'}, 'text': 'Link 1'},
+#         {'attrs': {'href': '/link2'}, 'text': 'Link 2'}]}]
 ```
 
-### Group by Tag Name (Legacy Mode)
+### From BeautifulSoup Objects
+
+You can pass an existing BeautifulSoup object or Tag instead of raw HTML:
+
+```python
+from bs4 import BeautifulSoup
+
+soup = BeautifulSoup(html, 'html.parser')
+
+# From a soup object
+BS2Json(soup).convert()
+
+# From a specific tag
+BS2Json(soup.find('body')).convert()
+
+# Convert on-the-fly with no soup
+converter = BS2Json()
+converter.convert(soup.body)
+```
+
+---
+
+## Options
+
+### Group by Tag Name
 
 By default, elements preserve document order. Use `group_by_tag=True` to group siblings by tag name — useful when you don't care about order and want quick access by tag:
 
@@ -102,19 +178,32 @@ BS2Json(html, group_by_tag=True).convert()
 # {'html': {'body': {'h3': ['First', 'Second'], 'p': 'Text'}}}
 ```
 
-### Control Comments and Whitespace
+### Comments
 
 ```python
-comment_html = '<html><body><!-- TODO: fix --><p>  hello  </p></body></html>'
+comment_html = '<html><body><!-- TODO --><p>text</p></body></html>'
 
-# Include comments (default)
+# Included by default
 BS2Json(comment_html).convert()
+# {'html': {'body': {'children': [{'comment': '<!-- TODO -->'}, {'p': 'text'}]}}}
 
 # Exclude comments
 BS2Json(comment_html, include_comments=False).convert()
+# {'html': {'body': {'p': 'text'}}}
+```
 
-# Preserve whitespace (stripped by default)
-BS2Json(comment_html, strip=False).convert()
+### Whitespace
+
+```python
+ws_html = '<html><body><p>  hello  </p></body></html>'
+
+# Stripped by default
+BS2Json(ws_html).convert()
+# {'html': {'body': {'p': 'hello'}}}
+
+# Preserve whitespace
+BS2Json(ws_html, strip=False).convert()
+# {'html': {'body': {'p': '  hello  '}}}
 ```
 
 ### Custom Labels
@@ -128,27 +217,65 @@ result = converter.convert()
 # {'html': {'body': {'p': {'attributes': {'class': ['x']}, 'content': 'hello'}}}}
 ```
 
-### Save and Prettify
+Or via constructor:
+
+```python
+BS2Json(html, attr_name='@', text_name='#text', comment_name='#comment')
+```
+
+### Configuration Object
+
+All options are stored in a `ConversionConfig` dataclass, accessible and modifiable at any time:
+
+```python
+from bs2json import BS2Json, ConversionConfig
+
+converter = BS2Json(html, strip=False)
+print(converter.config)
+# ConversionConfig(attr_name='attrs', text_name='text', comment_name='comment',
+#                  include_comments=True, strip=False, group_by_tag=False)
+
+# Modify config directly
+converter.config.group_by_tag = True
+converter.config.include_comments = False
+```
+
+---
+
+## Output
+
+### Save to File
 
 ```python
 converter = BS2Json(html)
 converter.convert()
 
-# Save to JSON file
+# Save to JSON file (pretty-printed, 4-space indent)
 converter.save('output.json')
 
-# Save with custom formatting
+# Save compact
 converter.save('compact.json', prettify=False)
+
+# Custom indent
 converter.save('indented.json', indent=2)
 
 # Save to a file-like object
 import io
 buf = io.StringIO()
 converter.save(buf)
-
-# Pretty-print to stdout
-converter.prettify()
 ```
+
+### Pretty Print
+
+```python
+converter = BS2Json(html)
+converter.convert()
+converter.prettify()  # prints to stdout
+```
+
+---
+
+## Advanced Usage
 
 ### Context Manager and Callable
 
@@ -181,41 +308,7 @@ soup.find('a').to_json(include_comments=False, strip=False)
 remove()  # clean up when done
 ```
 
-### Configuration Object
-
-All conversion options are stored in a `ConversionConfig` dataclass, accessible and modifiable at any time:
-
-```python
-from bs2json import BS2Json, ConversionConfig
-
-converter = BS2Json(html, strip=False)
-print(converter.config)
-# ConversionConfig(attr_name='attrs', text_name='text', comment_name='comment',
-#                  include_comments=True, strip=False, group_by_tag=False)
-
-# Modify config directly
-converter.config.group_by_tag = True
-converter.config.include_comments = False
-```
-
-## Also Works With BeautifulSoup Objects
-
-```python
-from bs4 import BeautifulSoup
-
-soup = BeautifulSoup(html, 'html.parser')
-
-# From a soup object
-BS2Json(soup).convert()
-
-# From a specific tag
-tag = soup.find('body')
-BS2Json(tag).convert()
-
-# Convert on-the-fly with no soup
-converter = BS2Json()
-converter.convert(tag)
-```
+---
 
 ## API Reference
 
@@ -243,6 +336,8 @@ converter.convert(tag)
 | `include_comments` | `True` | Whether to include HTML comments |
 | `strip` | `True` | Strip leading/trailing whitespace from text |
 | `group_by_tag` | `False` | Group siblings by tag name instead of preserving order |
+
+---
 
 ## Contributing
 
