@@ -68,6 +68,10 @@ class BS2Json:
     def __exit__(self, exc_type, exc_value, traceback):
         return False
 
+    def __repr__(self):
+        tag = self.soup.name if self.soup else None
+        return f"BS2Json(tag={tag!r}, include_comments={self.include_comments}, strip={self.strip})"
+
     def __call__(self, *args, **kwargs):
         return self.convert(*args, **kwargs)
 

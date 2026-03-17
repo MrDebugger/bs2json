@@ -240,6 +240,12 @@ class TestBS2Json(unittest.TestCase):
         self.assertEqual(body_content[1]['p'], 'paragraph')
         self.assertEqual(body_content[2]['h3'], 'second')
 
+    def test_repr(self):
+        """BS2Json should have a useful repr."""
+        converter = BS2Json(self.html_str)
+        r = repr(converter)
+        self.assertIn('BS2Json', r)
+
     def test_keep_order_default_off(self):
         """Default behavior (keep_order=False) should still group by tag name."""
         html = '<html><body><h3>first</h3><p>paragraph</p><h3>second</h3></body></html>'
