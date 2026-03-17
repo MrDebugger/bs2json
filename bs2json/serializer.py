@@ -43,6 +43,8 @@ class Serializer:
             json = json[element.name]
         elif isinstance(element, Element.Comment) and self.config.include_comments:
             return element.output_ready()
+        elif isinstance(element, Element.Comment):
+            return None
         elif isinstance(element, Element.NavigableString):
             text = element.output_ready()
             if self.config.strip:
@@ -59,7 +61,7 @@ class Serializer:
                 for elem in element:
                     name = self._get_name(elem)
                     value = self.to_json(elem) or None
-                    if not value and name == text_name:
+                    if not value and name in (text_name, comment_name):
                         continue
                     ordered_list.append({name: value})
                 return ordered_list
@@ -67,7 +69,7 @@ class Serializer:
                 for elem in element:
                     name = self._get_name(elem)
                     value = self.to_json(elem) or None
-                    if not value and name == text_name:
+                    if not value and name in (text_name, comment_name):
                         continue
                     if name in json:
                         json[name].append(value)

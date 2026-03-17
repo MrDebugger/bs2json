@@ -152,22 +152,14 @@ class TestBS2Json(unittest.TestCase):
         body = result['html']['body']
         self.assertIn('comment', body)
 
-    def test_include_comments_false_known_bug(self):
-        """include_comments=False: comment still appears under 'comment' key.
-
-        Known bug: __get_name() always returns 'comment' for Comment nodes, so the
-        key name is still 'comment'. The Comment branch in to_json() is skipped
-        (due to include_comments=False), but it falls through to NavigableString,
-        returning the raw text. The entry is still stored under the 'comment' key.
-        This test documents the current (broken) behavior.
-        """
+    def test_include_comments_false(self):
+        """include_comments=False should exclude HTML comments entirely."""
         html = '<html><body><!-- a comment --><p>text</p></body></html>'
         bs2json = BS2Json(html, include_comments=False)
         result = bs2json.convert()
         body = result['html']['body']
-        # Bug: 'comment' key is still present because __get_name() returns 'comment'
-        # regardless of include_comments; the value is the raw comment text string.
-        self.assertIn('comment', body)
+        self.assertNotIn('comment', body)
+        self.assertEqual(body['p'], 'text')
 
     def test_strip_false(self):
         """strip=False should preserve whitespace."""
