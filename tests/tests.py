@@ -1,7 +1,9 @@
 import unittest
 import io
 import sys
+import os
 import contextlib
+sys.path.insert(0, os.path.dirname(__file__))
 from bs4 import BeautifulSoup
 from bs2json import BS2Json
 from expected_output import input_1, expected_1, expected_2, expected_3, expected_4
